@@ -1,7 +1,5 @@
 package blockedPR;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -128,51 +126,7 @@ public class BlockedPRJob {
 		return residualAvg;
 
 	}
-/*
-	public static void  PRJoinJob(String inputPathString, String secondaryInputPathSring, String outputPathString)
-			throws Exception
-			{
-		Configuration conf = new Configuration();
 
-		Path outputPath = new Path(outputPathString);
-		Path inputPath = new Path(inputPathString);
-		Path secondaryInputPath = new Path(secondaryInputPathSring);
-
-		FileSystem dfs = FileSystem.get(outputPath.toUri(), conf);
-		if (dfs.exists(outputPath)) {
-			dfs.delete(outputPath, true);
-		}
-
-
-		Job job = Job.getInstance(conf);
-		job.setJarByClass(PRJoinJob.class);
-
-		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(Text.class);
-
-		job.setMapperClass(PRJoinMapper.class);
-		job.setReducerClass(PRJoinReducer.class);
-
-		job.setInputFormatClass(TextInputFormat.class);
-		job.setOutputFormatClass(TextOutputFormat.class);
-
-		FileInputFormat.addInputPath(job, inputPath);
-		FileInputFormat.addInputPath(job, secondaryInputPath);
-		FileOutputFormat.setOutputPath(job, outputPath);
-
-
-		job.waitForCompletion(true);
-
-		// Print Residual average
-		Long residualSum = job.getCounters().findCounter(BlockedPRConstants.PR_COUNTER.RESIDUALS_SUM).getValue();
-		Long nodesCount = job.getCounters().findCounter(BlockedPRConstants.PR_COUNTER.NODES_COUNT).getValue();
-		System.out.println("Residual Sum: "+residualSum.toString()+" Nodes: "+nodesCount.toString());
-		nodesCount = nodesCount !=0 ? nodesCount : 1;
-		Double residualAvg = (double) residualSum/nodesCount;
-		System.out.println("Average Residual: "+ residualAvg.toString());
-
-			}
-	*/
 	
 	
 	public static void  PRInputJob(String inputPathString, String outputPathString)
