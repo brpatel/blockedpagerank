@@ -13,7 +13,7 @@ public class BlockedPRCalculateJob {
 
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
-		  //System.out.println("inside blocked pr calculate job");
+		  System.out.println("inside blocked pr calculate job");
 		  Job job = Job.getInstance(conf);
 		  job.setJarByClass(BlockedPRCalculateJob.class);
 		 

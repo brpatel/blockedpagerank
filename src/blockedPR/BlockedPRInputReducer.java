@@ -17,7 +17,7 @@ public class BlockedPRInputReducer extends Reducer<Text, Text, Integer, Text> {
 					throws IOException ,InterruptedException 
 					{
 		Double pageRank = (double) 1/BlockedPRConstants.TOTAL_NODES;
-		//System.out.println("inside blockedPRInputreducer");
+		System.out.println("inside blockedPRInputreducer");
 		Integer sourceNode = Integer.parseInt(key.toString());
 		Integer blockID = BlockedPRConstants.getBlockIdFromNode(sourceNode);
 
@@ -29,7 +29,7 @@ public class BlockedPRInputReducer extends Reducer<Text, Text, Integer, Text> {
 		StringBuilder mapperValue = new StringBuilder(BlockedPRConstants.STEP1_ID+sourceNode+BlockedPRConstants.VALUE_SEPERATOR+pageRank.toString()+
 				BlockedPRConstants.VALUE_SEPERATOR +outLinkNodes.substring(0, outLinkNodes.length()-1));
 
-		//System.out.println("PRInput - PR in reduce: "+ pageRank);
+		System.out.println("PRInput - PR in reduce: blockID "+ pageRank + "===   " + blockID);
 
 		context.write(blockID, new Text(mapperValue.toString()));
 	}

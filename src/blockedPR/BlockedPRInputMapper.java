@@ -13,7 +13,7 @@ public class BlockedPRInputMapper  extends Mapper<Object, Text, Text, Text>   {
 	protected void map(Object key, Text value, Context context) 
 			throws IOException ,InterruptedException
 	{
-		String line = value.toString();
+		String line = value.toString().trim();
 		String[] values = line.split("\\s+");
 		
 		Text outputKey = new Text(values[0]);
@@ -30,8 +30,11 @@ public class BlockedPRInputMapper  extends Mapper<Object, Text, Text, Text>   {
 		boolean rejectResult = (((randomFloatValue >= rejectMin) && (randomFloatValue < rejectLimit)) ? false : true );
 	
 		if (rejectResult == true)
+		{
+			//BlockedPRConstants.TOTAL_NODES++;
 			context.write(outputKey, outputValue);
-		//System.out.println("inside blocked pr input mapper");
+		}
+		System.out.println("inside blocked pr input mapper");
 	}
 	
 	

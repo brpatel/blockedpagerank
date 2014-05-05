@@ -19,7 +19,7 @@ public class BlockedPRJob {
 
 	public static void main(String[] args) throws Exception{
 
-		CreateBlockList();
+	
 		double residualAvg = 1.0;// just to get inside while
 		int mapReducePass = 0;
 		
@@ -36,18 +36,7 @@ public class BlockedPRJob {
 		BlockedPROutputJob(BlockedPRConstants.CALCULATE_JOB_INPUT, BlockedPRConstants.OUTPUT_JOB_OUTPUT);
 	}
 
-	private static void CreateBlockList() throws IOException
-	{
-		Path pt=new Path(BlockedPRConstants.BLOCK_PATH_STRING);
-		FileSystem fs = FileSystem.get(new Configuration());
-		BufferedReader br=new BufferedReader(new InputStreamReader(fs.open(pt)));
-		String line;
-		while ((line = br.readLine()) != null){
-			BlockedPRConstants.blockList.add(Integer.parseInt(line.trim()));
-
-		}
-
-	}
+	
 
 	private static void CopyOutputToInput(String outputPathString,
 			String inputPathString) throws IOException {

@@ -18,7 +18,7 @@ public class BlockedPRCalculateMapper  extends Mapper<Object, Text, Text, Text> 
 		String[] values = strippedValue.toString().split(BlockedPRConstants.VALUE_SEPERATOR);
 		Integer sourceNode = Integer.parseInt(values[0]);
 		Double nodePageRank = Double.parseDouble(values[1]);
-		//System.out.println("inside blockedprcalculatemapper");	
+		System.out.println("inside blockedprcalculatemapper");	
 		
 		String[] outgoingNodes = values[2].split(BlockedPRConstants.LIST_SEPERATOR);
 		int	nodeDegree = outgoingNodes.length;
@@ -28,7 +28,7 @@ public class BlockedPRCalculateMapper  extends Mapper<Object, Text, Text, Text> 
 		{	
 			strippedValue =  strippedValue.concat(BlockedPRConstants.VALUE_SEPERATOR + outgoingNode +
 					BlockedPRConstants.LIST_SEPERATOR + prByDegree);
-			//System.out.println("PRCalc - Map - Key: "+ outgoingNode + " Value: " + prByDegree.toString());
+			System.out.println("PRCalc - Map - Key: "+ outgoingNode + " Value: " + prByDegree.toString());
 		}
 		context.write(new Text(blockIDKey), new Text(strippedValue));
 		
