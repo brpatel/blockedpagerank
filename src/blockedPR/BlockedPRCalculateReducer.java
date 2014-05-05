@@ -31,13 +31,14 @@ public class BlockedPRCalculateReducer extends Reducer<Text, Text, Text, Text> {
 
 		for(Text value : values)
 		{
+
 			String inputValue = value.toString();
 
 			if(inputValue.contains(BlockedPRConstants.STEP1_ID)){
+
 				inputValue = inputValue.split(BlockedPRConstants.STEP1_ID)[1];
-				//count = 0;
-				//System.out.println("inside blocked pr calculate reduce");
-				//System.out.println("first value ==" + value);
+				System.out.println("inside blocked pr calculate reduce");
+				System.out.println("first value ==" + value);
 				numberOfNodesinBlock++;	
 				String[] splitValues = inputValue.split(BlockedPRConstants.VALUE_SEPERATOR);
 				Integer srcNode = Integer.parseInt(splitValues[0]);
@@ -62,6 +63,7 @@ public class BlockedPRCalculateReducer extends Reducer<Text, Text, Text, Text> {
 							Double pr = Double.parseDouble(splitValues[3 + i].split(BlockedPRConstants.LIST_SEPERATOR)[1]);
 							destinationWithSourcePRMap.put(Integer.parseInt(listOfDest[i]), pr);				
 						}
+
 					}
 				}
 			}else if(inputValue.contains(BlockedPRConstants.STEP2_ID))
@@ -88,19 +90,28 @@ public class BlockedPRCalculateReducer extends Reducer<Text, Text, Text, Text> {
 
 		double residual = 0.0;
 		HashSet <Integer> dstNodeSet = new HashSet<Integer>();
-		//int numberOfNodesinBlock = sourceToDestinationMap.size();
-		for(int j=0;j<2;j++)
+		HashMap<Integer, Double> previousPageRank = new HashMap<Integer, Double>();
+
+
+		for(int j=0;j<BlockedPRConstants.Iterations;j++)
 		{
 			dstNodeSet.clear();
+
+			double innerResidual =0.0;
 			for(Map.Entry<Integer,String> entry : sourceToDestinationMap.entrySet())
 			{
 				double pageRank = 0.0;
+
 				Integer srcKey = (Integer) entry.getKey();
 				String destinationNodes = (String) entry.getValue();	
 				destinationNodes = destinationNodes.split(BlockedPRConstants.VALUE_SEPERATOR)[1];//list of destination nodes, [0] - PR(S)
 				String[] destNodes = destinationNodes.split(BlockedPRConstants.LIST_SEPERATOR);// each destination
 				Integer degree = destNodes.length;
-				//System.out.println("degree ==== " + degree);
+
+				System.out.println("degree ==== " + degree);
+
+				if(!previousPageRank.containsKey(srcKey))
+					previousPageRank.put(srcKey, Double.parseDouble(sourceToDestinationMap.get(srcKey).split(BlockedPRConstants.VALUE_SEPERATOR)[0]));
 
 				pageRank = ((1.0/numberOfNodesinBlock) * (1 - BlockedPRConstants.D));
 				// Add PR from nodes  with in Block : BE
@@ -111,44 +122,57 @@ public class BlockedPRCalculateReducer extends Reducer<Text, Text, Text, Text> {
 				if(blockConstantMap.containsKey(srcKey))
 					pageRank += BlockedPRConstants.D * blockConstantMap.get(srcKey);
 
+
 				double prByDegree = pageRank/degree;
-				//System.out.println("pageRank ==== " + pageRank);
-				//System.out.println("prByDegree ==== " + prByDegree);
+				System.out.println("pageRank ==== " + pageRank);
+				System.out.println("prByDegree ==== " + prByDegree);
 				double pr =0.0;
 
 				for( int i = 0; i < degree; i++)
 				{	
 					if (dstNodeSet.contains(Integer.parseInt(destNodes[i])))
 					{
-						//System.out.println("in if ==== ");
+						System.out.println("in if ==== ");
 						pr = destinationWithSourcePRMap.get(Integer.parseInt(destNodes[i]));
 						pr += prByDegree;
 						destinationWithSourcePRMap.put(Integer.parseInt(destNodes[i]), pr);
 					}
 					else
 					{
-						//System.out.println("in else ");
+						System.out.println("in else ");
 						pr = prByDegree;
 						destinationWithSourcePRMap.put(Integer.parseInt(destNodes[i]), prByDegree);
 						dstNodeSet.add(Integer.parseInt(destNodes[i]));
 					}
 				}
-				if (j==1)
+
+				// calculate inner residual
+				double prevPR = previousPageRank.get(srcKey);
+				innerResidual += (Math.abs(prevPR - pageRank)/pageRank);
+
+				if (j==BlockedPRConstants.Iterations - 1)
 				{					
 					StringBuilder mapperValue = new StringBuilder(BlockedPRConstants.STEP1_ID + srcKey + BlockedPRConstants.VALUE_SEPERATOR  + pageRank +
 							BlockedPRConstants.VALUE_SEPERATOR + sourceToDestinationMap.get(srcKey).split(BlockedPRConstants.VALUE_SEPERATOR)[1]);
 
 					double oldPageRank = Double.parseDouble(sourceToDestinationMap.get(srcKey).split(BlockedPRConstants.VALUE_SEPERATOR)[0]);
-					//System.out.println("pageRank ==== " + pageRank);
+					System.out.println("pageRank ==== " + pageRank);
 					residual += (Math.abs(oldPageRank - pageRank)/pageRank);
 					context.getCounter(BlockedPRConstants.PR_COUNTER.NODES_COUNT).increment(1);
 
 					context.write(key, new Text(mapperValue.toString()));
 				}
-			}
 
+				previousPageRank.put(srcKey, pageRank);
+			}
+			System.out.println(" converted LONG for pass ==" + (long)((residual/numberOfNodesinBlock)*1000));
+			System.out.println("Inner avg residual for  iteration " + j + "  is == " + innerResidual/numberOfNodesinBlock);
 		}
-		//System.out.println("residual ==== " + residual);
-		context.getCounter(BlockedPRConstants.PR_COUNTER.RESIDUALS_SUM).increment((long)(residual/numberOfNodesinBlock)*10000);
+
+		System.out.println("residual ====blockID " + residual + "==="+ key);
+
+		System.out.println(" converted LONG ===" + (long)((residual/numberOfNodesinBlock)*1000));
+		context.getCounter(BlockedPRConstants.PR_COUNTER.RESIDUALS_SUM).increment((long)((residual/numberOfNodesinBlock)*1000));
 					}
+
 }

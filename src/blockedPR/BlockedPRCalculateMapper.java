@@ -29,18 +29,20 @@ public class BlockedPRCalculateMapper  extends Mapper<Object, Text, Text, Text> 
 
 		for (String outgoingNode : outgoingNodes)
 		{	
+
 			int outGoingNodeBlockId = BlockedPRConstants.getBlockIdFromNode(Integer.parseInt(outgoingNode));
 			if(outGoingNodeBlockId != Integer.parseInt(blockIDKey))	
 			{
 				String blockingConstants = BlockedPRConstants.STEP2_ID + outgoingNode 
 						+BlockedPRConstants.VALUE_SEPERATOR + String.valueOf(prByDegree);
-				
+
 				context.write(new Text(String.valueOf(outGoingNodeBlockId)), new Text(blockingConstants));
 			}else{
 
 				strippedValue =  strippedValue.concat(BlockedPRConstants.VALUE_SEPERATOR + outgoingNode +
 						BlockedPRConstants.LIST_SEPERATOR + prByDegree);
 			}
+
 
 		}
 		strippedValue = BlockedPRConstants.STEP1_ID + strippedValue;
