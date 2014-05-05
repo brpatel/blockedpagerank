@@ -9,6 +9,11 @@ import org.apache.hadoop.mapreduce.Reducer;
 public class BlockedPRInputReducer extends Reducer<Text, Text, Integer, Text> {
 
 
+	/***
+	 * Input: <u;v> : <u;v>
+	 * Output: <b(u);u,PR(u),{v|u->V}>: <b(u);1#u_PR(u)_v1,v2,v3>
+	 * 
+	 */
 
 	@Override
 	protected void reduce(Text key, 

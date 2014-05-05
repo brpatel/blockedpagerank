@@ -8,6 +8,11 @@ import org.apache.hadoop.mapreduce.Mapper;
 
 public class BlockedPRInputMapper  extends Mapper<Object, Text, Text, Text>   {
 	
+	/***
+	 * Input: <u,v> : u v R
+	 * Output: <u;v>: <u;v>
+	 * 
+	 */
 	
 	@Override
 	protected void map(Object key, Text value, Context context) 
