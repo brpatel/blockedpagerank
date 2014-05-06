@@ -20,17 +20,10 @@ public class BlockedPRConstants {
 	public static final String CALCULATE_JOB_OUTPUT = "/user/hue/100edges_calculate_job_output";
 	public static final String JOIN_JOB_INPUT = "/user/hue/100edges_join_job_input";	
 	public static final String JOIN_JOB_OUTPUT = "/user/hue/100edges_join_job_output";
-	public static final String BLOCK_PATH_STRING = "/user/hue/blocks.txt";
+	public static final String BLOCK_PATH_STRING = "/user/hue/blocks.txt"; //"/user/hue/blocks_5nodes.txt"; // "
 	public static final String OUTPUT_JOB_OUTPUT = "/user/hue/100edges_output";
 	public static final int Iterations = 5;
 
-	/*public static final String INPUT_JOB_INPUT = "100edges_input";
-	public static final String INPUT_JOB_OUTPUT = "100edges_input_job_output";
-	public static final String CALCULATE_JOB_INPUT = "100edges_calculate_job_input";
-	public static final String CALCULATE_JOB_OUTPUT = "100edges_calculate_job_output";
-	public static final String JOIN_JOB_INPUT = "100edges_join_job_input";	
-	public static final String JOIN_JOB_OUTPUT = "100edges_join_job_output";
-	public static final String BLOCK_PATH_STRING = "blocks.txt";*/
 	
 
 	public static enum PR_COUNTER {
@@ -50,6 +43,7 @@ public class BlockedPRConstants {
         454285, 464398, 474196, 484050, 493968, 503752, 514131, 524510,
         534709, 545088, 555467, 565846, 576225, 586604, 596585, 606367,
         616148, 626448, 636240, 646022, 655804, 665666, 675448, 685230 );
+        
 	
 	public static int getBlockIdFromNode(int nodeId){
 

@@ -23,12 +23,11 @@ public class BlockedPRInputMapper  extends Mapper<Object, Text, Text, Text>   {
 		
 		Text outputKey = new Text(values[0]);
 		Text outputValue = new Text(values[1]);
-		System.out.println("outputkey ===" + outputKey);
 		double randomFloatValue = Double.parseDouble(values[2]);
 		
 		// compute filter parameters for netid dnm53
 		double fromNetID = 0.35;
-		double rejectMin = 0.99 * fromNetID;
+		double rejectMin =   0.99 * fromNetID;
 		double rejectLimit = rejectMin + 0.01;
 		// assume 0.0 <= rejectMin < rejectLimit <= 1.0
 		
@@ -39,7 +38,7 @@ public class BlockedPRInputMapper  extends Mapper<Object, Text, Text, Text>   {
 			//BlockedPRConstants.TOTAL_NODES++;
 			context.write(outputKey, outputValue);
 		}
-		System.out.println("inside blocked pr input mapper");
+		
 	}
 	
 	

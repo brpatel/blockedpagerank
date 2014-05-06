@@ -22,28 +22,29 @@ public class BlockedPRCalculateMapper  extends Mapper<Object, Text, Text, Text> 
 		String[] values = strippedValue.toString().split(BlockedPRConstants.VALUE_SEPERATOR);
 		Integer sourceNode = Integer.parseInt(values[0]);
 		Double nodePageRank = Double.parseDouble(values[1]);
+		if(values.length > 2){
+			String[] outgoingNodes = values[2].split(BlockedPRConstants.LIST_SEPERATOR);
+			int	nodeDegree = outgoingNodes.length;
+			Double prByDegree = nodePageRank/nodeDegree;
 
-		String[] outgoingNodes = values[2].split(BlockedPRConstants.LIST_SEPERATOR);
-		int	nodeDegree = outgoingNodes.length;
-		Double prByDegree = nodePageRank/nodeDegree;
+			for (String outgoingNode : outgoingNodes)
+			{	
 
-		for (String outgoingNode : outgoingNodes)
-		{	
+				int outGoingNodeBlockId = BlockedPRConstants.getBlockIdFromNode(Integer.parseInt(outgoingNode));
+				if(outGoingNodeBlockId != Integer.parseInt(blockIDKey))	
+				{
+					String blockingConstants = BlockedPRConstants.STEP2_ID + outgoingNode 
+							+BlockedPRConstants.VALUE_SEPERATOR + String.valueOf(prByDegree);
 
-			int outGoingNodeBlockId = BlockedPRConstants.getBlockIdFromNode(Integer.parseInt(outgoingNode));
-			if(outGoingNodeBlockId != Integer.parseInt(blockIDKey))	
-			{
-				String blockingConstants = BlockedPRConstants.STEP2_ID + outgoingNode 
-						+BlockedPRConstants.VALUE_SEPERATOR + String.valueOf(prByDegree);
+					context.write(new Text(String.valueOf(outGoingNodeBlockId)), new Text(blockingConstants));
+				}else{
 
-				context.write(new Text(String.valueOf(outGoingNodeBlockId)), new Text(blockingConstants));
-			}else{
+					strippedValue =  strippedValue.concat(BlockedPRConstants.VALUE_SEPERATOR + outgoingNode +
+							BlockedPRConstants.LIST_SEPERATOR + prByDegree);
+				}
 
-				strippedValue =  strippedValue.concat(BlockedPRConstants.VALUE_SEPERATOR + outgoingNode +
-						BlockedPRConstants.LIST_SEPERATOR + prByDegree);
+
 			}
-
-
 		}
 		strippedValue = BlockedPRConstants.STEP1_ID + strippedValue;
 		context.write(new Text(blockIDKey), new Text(strippedValue));
